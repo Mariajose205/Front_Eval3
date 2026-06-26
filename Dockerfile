@@ -1,16 +1,14 @@
-# Etapa de build con Maven y Java
-FROM maven:3.8.5-openjdk-17 AS build
-
+# Etapa de build con Maven
+FROM maven:3.8.6-openjdk-17 AS build
 WORKDIR /app
 COPY . .
+RUN mvn clean compile exec:java
 
-# Compilar y generar artefactos
-RUN mvn clean package
-
-# Etapa final con Nginx para servir archivos estáticos
+# Etapa final con Nginx
 FROM nginx:alpine
-COPY --from=build /app/target/ /usr/share/nginx/html
-
+# Copiamos los archivos estáticos generados en /output
+COPY --from=build /app/output/ /usr/share/nginx/html
 EXPOSE 80
+
 
 
